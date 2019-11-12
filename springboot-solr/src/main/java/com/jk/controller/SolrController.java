@@ -47,6 +47,7 @@ public class SolrController {
     @ResponseBody
     public Car queryCarById(Integer id) {
         Car car = solrService.queryCarById(id);
+        System.out.println(11111);
         return car;
     }
 
