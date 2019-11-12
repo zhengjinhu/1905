@@ -48,6 +48,8 @@ public class SolrController {
     public Car queryCarById(Integer id) {
         Car car = solrService.queryCarById(id);
         System.out.println(11111);
+
+        System.out.println(0000);
         return car;
     }
 
