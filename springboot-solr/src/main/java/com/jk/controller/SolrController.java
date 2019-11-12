@@ -50,6 +50,7 @@ public class SolrController {
         System.out.println(11111);
 
         System.out.println(0000);
+        System.out.println(3333);
         return car;
     }
 
