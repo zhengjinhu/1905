@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../js/jquery-easyui-1.5.4.2/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../js/jquery-easyui-1.5.4.2/themes/icon.css">
+    <script type="text/javascript" src="../js/jquery-easyui-1.5.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jquery-easyui-1.5.4.2/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../js/jquery-easyui-1.5.4.2/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="../js/jquery-easyui-1.5.4.2/util-js.js"></script>
+</head>
+<body class="easyui-layout">
+<div data-options="region:'north',title:'North Title',split:true" style="height:150px;">
+    当前登录用户：<div th:text="${session.user.userName}"></div>
+    <a href="../remove">注销</a><br>
+</div>
+<div data-options="region:'west',title:'West',split:true" style="width:150px;">
+    <ul id="tttreeId"></ul>
+</div>
+<div data-options="region:'center',title:'center title'" style="padding:5px;background:#eee;">
+
+    <div id="tttabsid" class="easyui-tabs" style="width:500px;height:250px;" fit="true">
+        <div title="Tab1" style="padding:20px;display:none;">
+            1905!!!
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('#tttreeId').tree({
+            url: '../tree/queryTreeList',
+            onClick: function (node) {
+                if (node.url != null && node.url != '') {
+                    if (!$("#tttabsid").tabs('exists', node.text)) {
+                        $('#tttabsid').tabs('add', {
+                            title: node.text,
+                            href: "../" + node.url,
+                            closable: true,
+                            tools: [{
+                                iconCls: 'icon-mini-refresh',
+                                handler: function () {
+                                    var tab = $("#tttabsid").tabs("getSelected");
+                                    tab.panel('open').panel('refresh');
+                                }
+                            }]
+                        });
+                    } else {
+                        $("#tttabsid").tabs("select", node.text);
+                    }
+                }
+            }
+        });
+
+    })
+
+
+</script>
+</body>
+</html>

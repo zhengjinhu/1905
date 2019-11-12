@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../js/jquery-1.8.0.js"></script>
+    <link rel="stylesheet" type="text/css" href="../js/jquery-easyui-1.5.4.2/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../js/jquery-easyui-1.5.4.2/themes/icon.css">
+    <script type="text/javascript" src="../js/jquery-easyui-1.5.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/jquery-easyui-1.5.4.2/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../js/jquery-easyui-1.5.4.2/locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body>
+关键字:<input type="text" id="carName" class="easyui-textbox">
+价格：<input type="text" id="minPrice" class="easyui-textbox">--
+      <input type="text" id="maxPrice" class="easyui-textbox">
+<a href="javaScript:queryCar()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">serch</a>
+<table id="dgtableid"></table>
+<div id="addCarId"></div>
+<div id="updCarId" class="easyui-dialog" title="汽车信息修改" style="width:300px;height:200px;"
+     data-options="iconCls:'icon-save',resizable:true,closed:true,modal:true,buttons:[{
+				text:'保存',
+				handler:function(){
+					saveCar();
+				}
+			}]">
+    <form id="updform">
+        <input type="hidden" name="carId">
+        <table align="center">
+            <tr>
+                <td>汽车名称</td>
+                <td><input class="easyui-textbox" name="carName"></td>
+            </tr>
+            <tr>
+                <td>汽车价格</td>
+                <td>
+                    <input class="easyui-textbox" name="carPrice"></td>
+                </td>
+            </tr>
+            <tr>
+                <td>汽车说明</td>
+                <td>
+                    <textarea name="carShow"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>出厂时间</td>
+                <td>
+                    <input type="text" class="easyui-datebox" name="carTime">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<script>
+
+    $(function(){
+        queryCar();
+    })
+
+    function queryCar(){
+
+        $('#dgtableid').datagrid({
+            url:'../queryCar',
+            toolbar: [{
+                iconCls: 'icon-add',
+                text:"新增",
+                handler: function(){
+                    $('#addCarId').dialog({
+                        title: '汽车新增',
+                        width: 300,
+                        height: 200,
+                        closed: false,
+                        cache: false,
+                        href: '../toAddCar',
+                        modal: false,
+                        buttons:[{
+                            text:'新增',
+                            iconCls:'icon-add',
+                            handler:function(){
+                                $.ajax({
+                                    url:"../addCar",
+                                    data:$("#addform").serialize(),
+                                    type:"post",
+                                    success:function(){
+                                        $('#dgtableid').datagrid('load',{});
+                                        alert("新增成功");
+                                    }
+                                })
+                                $('#addCarId').dialog('close');
+                            }
+                        },{
+                            text:'取消',
+                            iconCls:'icon-undo',
+                            handler:function(){
+                                $('#addCarId').dialog('close');
+                            }
+                        }]
+                    });
+
+                }
+            },'-',{
+                iconCls: 'icon-remove',
+                text:"删除",
+                handler: function(){
+                    var arr = $('#dgtableid').datagrid('getSelections');
+                    var temp="";
+                    for(var i=0;i<arr.length;i++){
+                        temp+=","+arr[i].carId;
+                    }
+                    var ids=temp.substr(1);
+                    $.ajax({
+                        url:"../delCar",
+                        data:{ids:ids},
+                        type:"post",
+                        success:function(){
+                            $('#dgtableid').datagrid('reload');
+                        },
+                        error:function(){
+                            alert("后台错误");
+                        }
+                    });
+                }
+            }],
+            onLoadSuccess:function(){
+                $('[name="btn"]').linkbutton({
+                    iconCls: 'icon-edit'
+                });
+            },
+            pagination:true,
+            pageSize:5,
+            pageList:[5,10,15,20],
+            queryParams: {
+                carName: $("#carName").val(),
+                minPrice: $("#minPrice").val(),
+                maxPrice: $("#maxPrice").val()
+            },
+            fitColumns:true,
+            columns:[
+                [
+                {field:'4',checkbox:true},
+                {field:'carId',title:'汽车编号',width:100},
+                {field:'carName',title:'汽车名称',width:100},
+                {field:'carShow',title:'汽车说明',width:100},
+                {field:'carTime',title:'出厂日期',width:100},
+                {field:'carPrice',title:'汽车价格',width:100},
+                {field:'1',title:'操作',width:100,
+                    formatter: function(value,row,index){
+                        return '<a name="btn" href="javaScript:queryCarById('+row.carId+')">修改</a>'
+                    }
+                }
+            ]
+            ]
+        });
+
+    }
+    function queryCarById(id) {
+
+        $.ajax({
+            url:'../queryCarById',
+            data:{id:id},
+            success:function(data){
+                $("#updform").form('load',data);
+                $("#updCarId").dialog("open");
+            }
+        })
+    }
+    function saveCar() {
+        $.ajax({
+            url:"../updCar",
+            data:$("#updform").serialize(),
+            type:"post",
+            success:function () {
+                $("#updCarId").dialog("close");
+                $('#dgtableid').datagrid('load',{});
+                alert("修改成功");
+            }
+        })
+    }
+</script>
+</body>
+</html>

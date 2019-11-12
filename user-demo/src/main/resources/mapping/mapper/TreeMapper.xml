@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jk.tree.mapper.TreeMapper">
+
+
+    <!--<select id="queryTree" resultType="com.jk.tree.model.Tree">
+         select * from t_tree  where pid=#{id}
+    </select>-->
+    <select id="queryTree" resultType="com.jk.tree.model.Tree">
+        select * from t_tree t
+        left join t_roletree rp on t.id=rp.treeId
+        left join t_user_role ur on ur.roid=rp.roleId
+        where ur.uid=#{userId} and t.pid=#{id}
+        group by t.id
+    </select>
+</mapper>

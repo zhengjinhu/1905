@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="cc" class="easyui-layout" fit="true" style="width:600px;height:400px;">
+    <div data-options="region:'west',title:'角色信息',split:true" style="width:35%;">
+        <table id="dgshowRoleId" style="width:99%;"></table>
+    </div>
+    <div data-options="region:'center',footer:'#saveRolePowerToolsId',title:'权限信息'"
+         style="padding:5px;background:#eee;width:25%;">
+        <input type="hidden" id="roleIdId">
+        <ul id="ttpowerTreeId"></ul>
+        <div id="mm" class="easyui-menu" style="width:120px;">
+            <div onclick="append()" data-options="iconCls:'icon-add'">追加</div>
+            <div onclick="upd()" data-options="iconCls:'icon-edit'">修改</div>
+            <div onclick="removePowerById()" data-options="iconCls:'icon-remove'">移除</div>
+        </div>
+    </div>
+    <div id="saveRolePowerToolsId">
+        <a id="btn" href="JavaScript:saveRolePower()" class="easyui-linkbutton"
+           data-options="iconCls:'icon-add'">保存权限</a>
+    </div>
+    <div data-options="region:'east',title:'权限详细',split:true" style="width:40%;">
+        <input type="hidden" id="powerInfoPowerId">
+        <table id="dgshowPowerInfoId" style="width:99%;"></table>
+    </div>
+    <div id="savePowerInfoToolsId">
+        <a id="btn" href="JavaScript:openPowerInfo()" class="easyui-linkbutton" data-options="iconCls:'icon-add'">新增</a>
+    </div>
+</div>
+<div id="ddPowerInfoDialogId" class="easyui-dialog" title="新增详细权限" style="width:400px;height:300px;"
+     data-options="iconCls:'icon-save',resizable:true,closed:true,modal:true,buttons:[{
+				text:'保存',
+				handler:function(){
+					savePowerInfo();
+				}
+			}]">
+    <table>
+        <tr>
+            <td>权限信息：</td>
+            <td><input name="text" id="piTextId" class="easyui-textbox"></td>
+        </tr>
+        <tr>
+            <td>权限url：</td>
+            <td><input name="url" id="piUrlId" class="easyui-textbox"></td>
+        </tr>
+    </table>
+</div>
+<script>
+
+    $(function () {
+        loadRole();
+        loadttpowerTreeId(-1);
+    })
+
+    function loadRole() {
+        $('#dgshowRoleId').datagrid({
+            url: '../role/queryRole',
+            fitColumns: true,
+            onLoadSuccess: function () {
+                $('[name="bdqx"]').linkbutton({
+                    iconCls: 'icon-add'
+                });
+            },
+            columns: [
+                [
+                    {field: 'rid', title: '编号', width: 100},
+                    {field: 'rname', title: '角色名称', width: 100},
+                    {
+                        field: 'r1', title: '操作', width: 100,
+                        formatter: function (value, row, index) {
+                            return '<a name="bdqx" href="javaScript:saveRolePowerShowTree(' + row.rid + ')">绑定权限</a>';
+                        }
+                    }
+                ]
+            ]
+        });
+    }
+
+    function saveRolePowerShowTree(id) {
+        $("#roleIdId").val(id);
+        loadttpowerTreeId(id);
+    }
+
+    function loadttpowerTreeId(id) {
+        $('#ttpowerTreeId').tree({
+            url: '../role/queryRoleTree?id=' + id,
+            checkbox: true,
+            lines: true,
+            parentField: 'pid',// 使用util-js.js  树形工具包必须加此属性
+            onContextMenu: function (e, node) {
+                //关闭浏览器的右击事件
+                e.preventDefault();
+                // 查找节点
+                $('#ttpowerTreeId').tree('select', node.target);
+                // 显示快捷菜单
+                $('#mm').menu('show', {
+                    left: e.pageX,
+                    top: e.pageY
+                });
+            },
+            onDblClick: function (node) {
+                //  $("#powerInfoPowerId").val(node.id);
+                //loadPowerInfo(node.id)
+            }
+        });
+    }
+
+    function saveRolePower() {
+        var roleId = $("#roleIdId").val();
+        //获取所有被选中的节点id
+        var nodeArr = $('#ttpowerTreeId').tree("getChecked");
+        var powerIds = "";
+        for (var i = 0; i < nodeArr.length; i++) {
+            powerIds += powerIds == '' ? nodeArr[i].id : "," + nodeArr[i].id;
+        }
+        $.post("../role/saveRolePower", {roleId: roleId, powerIds: powerIds}, function (data) {
+            if (data) {
+                $.messager.alert('提示', '角色绑定权限成功！！！', 'info');
+            } else {
+                $.messager.alert('提示', '角色绑定权限失败！！！', 'error');
+            }
+
+        })
+    }
+</script>
+</body>
+</html>

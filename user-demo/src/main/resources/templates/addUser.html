@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form id="addUserFormId">
+    <table align="center">
+        <tr>
+            <td>用户账号</td>
+            <td><input class="easyui-textbox" style="width:300px" name="userName"></td>
+        </tr>
+        <tr>
+            <td>用户密码</td>
+            <td><input class="easyui-textbox" style="width:300px" name="userPwd"></td>
+        </tr>
+        <tr>
+            <td>用户性别</td>
+            <td>
+                <input type="radio" name="userSex" value="1">男
+                <input type="radio" name="userSex" value="2">女
+            </td>
+        </tr>
+        <tr>
+            <td>角色</td>
+            <td>
+                <input id="roleId" name="roleIds">
+            </td>
+        </tr>
+        <tr>
+            <td>用户生日</td>
+            <td><input type="text" class="easyui-datebox" name="userDate"></input></td>
+        </tr>
+    </table>
+</form>
+<script>
+
+    $(function () {
+        loadRole();
+    })
+
+    function loadRole() {
+        $('#roleId').combobox({
+            url: '../role/queryRole',
+            multiple: true,
+            valueField: 'rid',
+            textField: 'rname'
+        });
+    }
+
+</script>
+</body>
+</html>

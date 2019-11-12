@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jk.mapper.CarMapper" >
+
+<select id="queryCar" resultType="java.util.Map">
+    SELECT count(*) c , DATE_FORMAT(carTime,'%m') t FROM `t_car` where YEAR(carTime)=2019  GROUP BY DATE_FORMAT(carTime,'%Y-%m')
+</select>
+
+    <!--<select id="queryCarName" resultType="java.util.Map">
+        SELECT carName n,count(*) c,DATE_FORMAT(carTime,'%Y') m FROM t_car GROUP BY carName,DATE_FORMAT(carTime,'%Y')
+    </select>-->
+    <select id="queryCarAll" resultType="java.util.LinkedHashMap">
+        SELECT count(*) count,DATE_FORMAT(carTime,'%Y-%m') time,typeId FROM t_car c GROUP BY c.typeId,DATE_FORMAT(carTime,'%Y-%m')
+    </select>
+
+</mapper>
