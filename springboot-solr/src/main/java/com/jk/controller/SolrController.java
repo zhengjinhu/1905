@@ -2,7 +2,6 @@ package com.jk.controller;
 
 import com.jk.model.Car;
 import com.jk.service.SolrService;
-import jdk.nashorn.internal.parser.JSONParser;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -80,14 +77,12 @@ public class SolrController {
             SolrInputDocument doc = new SolrInputDocument();
             doc.setField("id", car.getCarId());
             doc.setField("carName", car.getCarName());
-            //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             doc.setField("carTime", car.getCarTime());
             doc.setField("carPrice", car.getCarPrice());
             doc.setField("carShow", car.getCarShow());
 
 
             client.add("core1", doc);
-            //client.commit();
             client.commit("core1");
         } catch (Exception e) {
             e.printStackTrace();
@@ -103,14 +98,12 @@ public class SolrController {
             SolrInputDocument doc = new SolrInputDocument();
             doc.setField("id", carId);
             doc.setField("carName", car.getCarName());
-            //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             doc.setField("carTime", car.getCarTime());
             doc.setField("carPrice", car.getCarPrice());
             doc.setField("carShow", car.getCarShow());
 
 
             client.add("core1", doc);
-            //client.commit();
             client.commit("core1");
         } catch (Exception e) {
             e.printStackTrace();
@@ -181,7 +174,6 @@ public class SolrController {
             Map<String, Map<String, List<String>>> highlight = queryResponse.getHighlighting();
 
             List<Car> list1 =new ArrayList<>();
-            //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             for (SolrDocument result : results) {
                 Car car1=new Car();
                 String highFile="";
@@ -205,7 +197,6 @@ public class SolrController {
             }
             map1.put("total",numFound);
             map1.put("rows",list1);
-            //map1 = solrService.queryCar(car,page,rows);
             return map1;
         } catch (Exception e) {
             e.printStackTrace();
